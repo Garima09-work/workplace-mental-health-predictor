@@ -1,28 +1,35 @@
 import os
 
-# File paths
+# Base paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_RAW_PATH = os.path.join(BASE_DIR, "data", "raw", "survey.csv")
 MODELS_DIR = os.path.join(BASE_DIR, "models")
+BEST_MODEL_PATH = os.path.join(MODELS_DIR, "best_mental_health_pipeline.pkl")
+METRICS_REPORT_PATH = os.path.join(MODELS_DIR, "model_metrics_report.json")
 
-RF_MODEL_PATH = os.path.join(MODELS_DIR, "mental_health_rf_model.pkl")
-XGB_MODEL_PATH = os.path.join(MODELS_DIR, "mental_health_xgb_model.pkl")
-ENCODER_PATH = os.path.join(MODELS_DIR, "label_encoder.pkl")
+# Target column
+TARGET_COL = "treatment"
 
-# Feature Mappings
-SIZE_MAPPING = {"1-5": 0, "6-25": 1, "26-100": 2, "100-500": 3, "101-500": 3, "501-1000": 4, "More than 1000": 5}
-TECH_MAPPING = {"No": 0, "Yes": 1}
-BENEFITS_MAPPING = {"No": 0, "Yes": 1, "Don't know": 2, "Not eligible for coverage / N/A": 3}
-CARE_MAPPING = {"No": 0, "Yes": 1, "Not sure": 2}
-DISCUSSION_MAPPING = {"No": 0, "Yes": 1, "Don't know": 2}
-RESOURCES_MAPPING = {"No": 0, "Yes": 1, "Don't know": 2}
-ANONYMITY_MAPPING = {"No": 0, "Yes": 1, "I don't know": 2, "Don't know": 2}
-LEAVE_MAPPING = {"Very easy": 0, "Somewhat easy": 1, "Neither easy nor difficult": 2, "Somewhat difficult": 3, "Very difficult": 4, "Don't know": 5}
-CONSEQUENCES_MAPPING = {"No": 0, "Yes": 1, "Maybe": 2}
-SERIOUSNESS_MAPPING = {"No": 0, "Yes": 1, "I don't know": 2, "Don't know": 2}
+# Columns to remove (no predictive value / unstandardized text)
+DROP_COLS = ["Timestamp", "comments"]
 
-CLASS_LABELS = {
-    0: "No (Unlikely to seek treatment)",
-    1: "Maybe (Undecided / Potential trend)",
-    2: "Yes (Highly likely to seek treatment)"
-}
+# Feature Categorizations
+NUMERIC_COLS = ["Age", "company_support_score", "consequence_concern_score", "workplace_comfort_score"]
+
+ORDINAL_COLS = ["no_employees", "leave", "work_interfere"]
+
+# Define explicit ordering for Ordinal Encoded features
+ORDINAL_CATEGORIES = [
+    ["1-5", "6-25", "26-100", "100-500", "501-1000", "More than 1000"], # no_employees
+    ["Very easy", "Somewhat easy", "Don't know", "Neither easy nor difficult", "Somewhat difficult", "Very difficult"], # leave
+    ["Never", "Rarely", "Sometimes", "Often", "Don't know"] # work_interfere
+]
+
+NOMINAL_COLS = [
+    "Gender", "Country", "state", "self_employed", "family_history",
+    "remote_work", "tech_company", "benefits", "care_options",
+    "wellness_program", "seek_help", "anonymity",
+    "mental_health_consequence", "phys_health_consequence",
+    "coworkers", "supervisor", "mental_health_interview",
+    "phys_health_interview", "mental_vs_physical", "obs_consequence"
+]
