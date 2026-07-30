@@ -214,55 +214,169 @@ workplace-mental-health-predictor/
 
 ---
 
-## ⚙️ Installation
+## ⚙️ How to Run the Project
 
+Follow these step-by-step instructions to clone, set up dependencies, train the machine learning models, verify training completion, and test the project locally.
+
+### Step 1: Fork / Clone the Repository
+
+#### Option A: Fork via GitHub
+1. Open the repository page on GitHub: `https://github.com/Subhadip-Paul2006/workplace-mental-health-predictor-Parvati`
+2. Click the **Fork** button in the top-right corner to create a copy under your account.
+3. Clone your forked repository:
+   ```bash
+   git clone https://github.com/<YOUR-USERNAME>/workplace-mental-health-predictor-Parvati.git
+   cd workplace-mental-health-predictor-Parvati
+   ```
+
+#### Option B: Direct Clone
 ```bash
-# Clone the repository
 git clone https://github.com/Subhadip-Paul2006/workplace-mental-health-predictor-Parvati.git
-cd workplace-mental-health-predictor
-
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
+cd workplace-mental-health-predictor-Parvati
 ```
 
 ---
 
-## 📋 Requirements
+### Step 2: Install Dependencies
 
-```text
-numpy
-pandas
-scikit-learn
-xgboost
-catboost
-lightgbm
-imbalanced-learn
-optuna
-shap
-joblib
-streamlit
-```
+It is recommended to use a Python virtual environment to manage project packages.
+
+1. **Create a Virtual Environment**:
+   ```bash
+   python -m venv .venv
+   ```
+
+2. **Activate the Virtual Environment**:
+   - **Windows (PowerShell)**:
+     ```powershell
+     .venv\Scripts\Activate.ps1
+     ```
+   - **Windows (Command Prompt / CMD)**:
+     ```cmd
+     .venv\Scripts\activate.bat
+     ```
+   - **Linux / macOS**:
+     ```bash
+     source .venv/bin/activate
+     ```
+
+3. **Install Requirements**:
+   ```bash
+   python -m pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
 
 ---
 
-## 🏃 Running the Project
+### Step 3: Train the Model Using the Dataset
 
-### Training the Model
-To execute data cleaning, feature engineering, model benchmarking, Optuna hyperparameter optimization, SHAP analysis, and artifact export:
+The dataset is located at `data/raw/survey.csv`. To run data cleaning, feature engineering, multi-model benchmarking, hyperparameter tuning with **Optuna**, SHAP explainability analysis, and export the trained model artifact:
 
 ```bash
 python -m src.train
 ```
 
-### Running Streamlit Web App
-To launch the interactive diagnostic dashboard:
+#### What Happens During Training:
+1. **Dataset Ingestion**: Reads raw survey data from `data/raw/survey.csv`.
+2. **Data Leakage Protection**: Performs an 80/20 Stratified Train-Test Split *before* fitting transformers.
+3. **Data Cleaning & Engineering**: Standardizes gender, imputes age outliers, applies US state logic, and computes composite scores (`company_support_score`, `consequence_concern_score`, `workplace_comfort_score`).
+4. **ColumnTransformer Fitting**: Encodes ordinal and nominal attributes while scaling continuous numeric attributes.
+5. **Multi-Model Suite Benchmarking**: Evaluates 7 baseline algorithms (Logistic Regression, Decision Tree, Random Forest, XGBoost, CatBoost, LightGBM, Extra Trees).
+6. **Optuna & RandomizedSearchCV Tuning**: Optimizes hyperparameters for gradient boosted trees.
+7. **Winning Model Selection & Export**: Evaluates models on held-out test data, selects the best performing pipeline based on F1 Score & ROC-AUC, and serializes the complete end-to-end pipeline into `models/best_mental_health_pipeline.pkl`.
+8. **Metrics Export**: Writes complete performance evaluation report to `models/model_metrics_report.json`.
+
+---
+
+### Step 4: Ensure & Verify if the Model is Trained
+
+You can verify whether model training succeeded using any of the following checks:
+
+#### 1. File Artifact Existence Check
+Confirm that the trained model `.pkl` file and metrics `.json` report exist in the `models/` directory:
+
+- **Windows (PowerShell)**:
+  ```powershell
+  Test-Path models/best_mental_health_pipeline.pkl
+  Test-Path models/model_metrics_report.json
+  ```
+- **Linux / macOS**:
+  ```bash
+  ls -lh models/
+  ```
+
+#### 2. Console Training Log Verification
+When `python -m src.train` completes, the terminal output should end with:
+```text
+[SUCCESS] Full end-to-end pipeline saved to: .../models/best_mental_health_pipeline.pkl
+[SUCCESS] Metrics report saved to: .../models/model_metrics_report.json
+```
+
+#### 3. Programmatic Pipeline Verification
+Run this quick Python command to verify that the exported model artifact can be loaded and executed:
+
+```bash
+python -c "import joblib; pipe = joblib.load('models/best_mental_health_pipeline.pkl'); print('✅ Pipeline loaded successfully! Steps:', list(pipe.named_steps.keys()))"
+```
+*Expected Output*: `✅ Pipeline loaded successfully! Steps: ['cleaner', 'preprocessor', 'classifier']`
+
+---
+
+### Step 5: Run the Project for Testing
+
+#### A. Interactive Web Application Testing (Streamlit UI)
+Launch the Streamlit web dashboard to test model predictions interactively:
 
 ```bash
 streamlit run app.py
+```
+- Open your browser at `http://localhost:8501`.
+- Enter employee survey inputs (Age, Gender, Work Interference, Company Benefits, etc.).
+- Click **"Evaluate Treatment Risk"** to view the real-time probability score and treatment recommendation.
+
+#### B. Automated Batch / Script Testing
+To re-evaluate the trained pipeline against test samples or test custom data programmatically:
+
+```python
+import joblib
+import pandas as pd
+
+# Load saved end-to-end pipeline
+pipeline = joblib.load("models/best_mental_health_pipeline.pkl")
+
+# Sample raw survey record for testing
+sample_data = pd.DataFrame([{
+    "Age": 30,
+    "Gender": "Male",
+    "Country": "United States",
+    "state": "CA",
+    "self_employed": "No",
+    "family_history": "Yes",
+    "work_interfere": "Often",
+    "no_employees": "100-500",
+    "remote_work": "Yes",
+    "tech_company": "Yes",
+    "benefits": "Yes",
+    "care_options": "Yes",
+    "wellness_program": "No",
+    "seek_help": "Yes",
+    "anonymity": "Yes",
+    "leave": "Somewhat easy",
+    "mental_health_consequence": "No",
+    "phys_health_consequence": "No",
+    "coworkers": "Some of them",
+    "supervisor": "Yes",
+    "mental_health_interview": "No",
+    "phys_health_interview": "Maybe",
+    "mental_vs_physical": "Yes",
+    "obs_consequence": "No"
+}])
+
+# Predict treatment requirement & probability
+prediction = pipeline.predict(sample_data)[0]
+probability = pipeline.predict_proba(sample_data)[0][1]
+
+print(f"Test Result -> Prediction: {'Treatment Required' if prediction == 1 else 'No Treatment Needed'} (Probability: {probability:.2%})")
 ```
 
 ---
@@ -271,14 +385,14 @@ streamlit run app.py
 
 ### 1. Cleaning & Imputation
 - **Gender**: Categorized via regex matching into `Male`, `Female`, `Non-binary`, or `Other`.
-- **Age**: Values Outside $[18, 100]$ are replaced with median valid age ($\approx 32.0$).
+- **Age**: Outlier values outside the range of 18 to 100 years are replaced with the median valid age (~32.0).
 - **State**: Set to `'Not Applicable'` whenever `Country != 'United States'`.
 
 ### 2. Feature Engineering
 Composite scores capture domain interactions:
-- $\text{company\_support\_score} = \text{benefits} + \text{care\_options} + \text{wellness\_program} + \text{seek\_help}$
-- $\text{consequence\_concern\_score} = \text{mental\_health\_consequence} + \text{phys\_health\_consequence} + \text{obs\_consequence}$
-- $\text{workplace\_comfort\_score} = \text{coworkers} + \text{supervisor} + \text{anonymity} + \text{leave}$
+- `company_support_score = benefits + care_options + wellness_program + seek_help`
+- `consequence_concern_score = mental_health_consequence + phys_health_consequence + obs_consequence`
+- `workplace_comfort_score = coworkers + supervisor + anonymity + leave`
 
 ---
 
@@ -482,13 +596,13 @@ gantt
 ### 9. Pie Chart
 ```mermaid
 pie title Model Test Accuracy Performance
-    "Tuned CatBoost (82.14%)" : 82.14
-    "Tuned XGBoost (82.14%)" : 82.14
-    "LightGBM (80.56%)" : 80.56
-    "Random Forest (77.38%)" : 77.38
-    "Extra Trees (75.79%)" : 75.79
-    "Decision Tree (74.60%)" : 74.60
-    "Logistic Regression (69.44%)" : 69.44
+    "Tuned CatBoost" : 82.14
+    "Tuned XGBoost" : 82.14
+    "LightGBM" : 80.56
+    "Random Forest" : 77.38
+    "Extra Trees" : 75.79
+    "Decision Tree" : 74.60
+    "Logistic Regression" : 69.44
 ```
 
 ### 10. Quadrant Chart
@@ -515,28 +629,28 @@ quadrantChart
 requirementDiagram
 
     requirement req1 {
-    id: 1
-    text: Full feature set inclusion without arbitrary column drops
-    risk: Medium
-    verifyMethod: Inspection
+    id: "1"
+    text: "Full feature set inclusion without arbitrary column drops"
+    risk: medium
+    verifyMethod: inspection
     }
 
     requirement req2 {
-    id: 2
-    text: Zero data leakage in ColumnTransformer preprocessing
-    risk: High
-    verifyMethod: Test
+    id: "2"
+    text: "Zero data leakage in ColumnTransformer preprocessing"
+    risk: high
+    verifyMethod: test
     }
 
     requirement req3 {
-    id: 3
-    text: F1-Score exceeding 80% on 20% test split
-    risk: High
-    verifyMethod: Test
+    id: "3"
+    text: "F1-Score exceeding 80% on 20% test split"
+    risk: high
+    verifyMethod: test
     }
 
     element pipeline {
-    type: System
+    type: "System"
     }
 
     pipeline - satisfies -> req1
@@ -620,72 +734,85 @@ timeline
     Phase 4 : Production Deployment : Serialized pipeline & deployed Streamlit UI
 ```
 
-### 17. ZenUML Diagram
+### 17. Interactive Sequence Flow Diagram
 ```mermaid
-zenuml
-    Client -> StreamlitUI: submitSurveyForm(data)
-    StreamlitUI -> JoblibPipeline: predict(rawData)
-    JoblibPipeline -> RawDataCleaner: clean_raw_data(data)
-    RawDataCleaner -> ColumnTransformer: transform(cleanedData)
-    ColumnTransformer -> CatBoostClassifier: predict_proba(tensor)
-    CatBoostClassifier -> StreamlitUI: return probability
+sequenceDiagram
+    autonumber
+    actor Client as Client / User
+    participant StreamlitUI as Streamlit UI
+    participant JoblibPipeline as Joblib Pipeline
+    participant RawDataCleaner as Raw Data Cleaner
+    participant ColumnTransformer as Column Transformer
+    participant CatBoostClassifier as CatBoost Classifier
+
+    Client->>StreamlitUI: submitSurveyForm(data)
+    StreamlitUI->>JoblibPipeline: predict(rawData)
+    JoblibPipeline->>RawDataCleaner: clean_raw_data(data)
+    RawDataCleaner->>ColumnTransformer: transform(cleanedData)
+    ColumnTransformer->>CatBoostClassifier: predict_proba(tensor)
+    CatBoostClassifier-->>StreamlitUI: return probability score
 ```
 
-### 18. Sankey Diagram
+### 18. Data Ingestion Flow Diagram
 ```mermaid
-sankey-beta
-    RawData,CleanedData,1259
-    CleanedData,TrainSplit,1007
-    CleanedData,TestSplit,252
-    TrainSplit,ColumnTransformer,1007
-    ColumnTransformer,TunedCatBoost,1007
+flowchart LR
+    RawData["Raw Data (1259 rows)"] --> CleanedData["Cleaned Data (1259 rows)"]
+    CleanedData --> TrainSplit["Train Split (1007 rows)"]
+    CleanedData --> TestSplit["Test Split (252 rows)"]
+    TrainSplit --> ColumnTransformer["ColumnTransformer"]
+    ColumnTransformer --> TunedCatBoost["Tuned CatBoost Model"]
 ```
 
-### 19. XY Chart
+### 19. Model Accuracy Benchmark Diagram
 ```mermaid
-xychart-beta
-    title "Model Accuracy Benchmarks (%)"
-    x-axis ["LogisticReg", "DecisionTree", "ExtraTrees", "RandomForest", "LightGBM", "XGBoost", "CatBoost"]
-    y-axis "Accuracy %" 60 --> 90
-    bar [69.44, 74.60, 75.79, 77.38, 80.56, 82.14, 82.14]
+flowchart TD
+    subgraph Model Test Accuracy Performance
+        M1["Logistic Regression: 69.44%"]
+        M2["Decision Tree: 74.60%"]
+        M3["Extra Trees: 75.79%"]
+        M4["Random Forest: 77.38%"]
+        M5["LightGBM: 80.56%"]
+        M6["Tuned XGBoost: 82.14%"]
+        M7["Tuned CatBoost: 82.14%"]
+    end
 ```
 
-### 20. Block Diagram
+### 20. End-to-End Block Architecture Diagram
 ```mermaid
-block-beta
-    columns 3
-    block:raw["Raw Data (1259 rows)"]:1
-    block:prep["Cleaner + ColumnTransformer"]:1
-    block:model["Tuned CatBoost Model"]:1
-    raw --> prep
-    prep --> model
+flowchart LR
+    raw["Raw Data (1259 rows)"] --> prep["Cleaner + ColumnTransformer"] --> model["Tuned CatBoost Model"]
 ```
 
-### 21. Packet Diagram
+### 21. Feature Tensor Encoding Map
 ```mermaid
-packet-beta
-    0-7: "Age (Float)"
-    8-15: "Gender (Encoded)"
-    16-23: "Work Interfere (Ordinal)"
-    24-31: "Company Support Score (Numeric)"
+flowchart LR
+    subgraph Preprocessed Tensor Feature Encoding
+        P0["0-7: Age (Float / Scaled)"]
+        P1["8-15: Gender (One-Hot Encoded)"]
+        P2["16-23: Work Interfere (Ordinal Encoded)"]
+        P3["24-31: Company Support Score (Numeric)"]
+    end
 ```
 
-### 22. Kanban Board
+### 22. Project Kanban Workflow
 ```mermaid
-kanban
-  Todo
-    [Integration Tests]
-    [API REST Endpoint]
-  In Progress
-    [Production Documentation]
-  Done
-    [Data Cleaning Engine]
-    [Optuna Tuning Engine]
-    [CatBoost Pipeline Export]
-    [Streamlit UI Setup]
+flowchart TD
+    subgraph Todo
+        T1["Integration Tests"]
+        T2["API REST Endpoint"]
+    end
+    subgraph In Progress
+        P1["Production Documentation"]
+    end
+    subgraph Done
+        D1["Data Cleaning Engine"]
+        D2["Optuna Tuning Engine"]
+        D3["CatBoost Pipeline Export"]
+        D4["Streamlit UI Setup"]
+    end
 ```
 
-### 23. Architecture Diagram
+### 23. Layered Architecture Diagram
 ```mermaid
 flowchart LR
     subgraph Data Layer
@@ -704,16 +831,16 @@ flowchart LR
     A --> B --> C --> D --> E
 ```
 
-### 24. Radar Chart
-```mermaid
-radar-beta
-    title "Model Performance Trade-Off"
-    axis Accuracy, Precision, Recall, F1-Score, ROC-AUC
-    "Tuned CatBoost": [0.82, 0.83, 0.84, 0.84, 0.89]
-    "Logistic Regression": [0.69, 0.70, 0.72, 0.69, 0.76]
-```
+### 24. Model Comparison Metrics
+| Evaluation Metric | Tuned CatBoost (Winner) | Logistic Regression Baseline |
+| :--- | :--- | :--- |
+| **Accuracy** | **82.14%** | 69.44% |
+| **Precision** | **0.8258** | 0.6970 |
+| **Recall** | **0.8438** | 0.7188 |
+| **F1-Score** | **0.8352** | 0.6917 |
+| **ROC-AUC** | **0.8942** | 0.7612 |
 
-### 25. Event Modeling
+### 25. Event Inference Flow
 ```mermaid
 sequenceDiagram
     participant User
@@ -725,26 +852,37 @@ sequenceDiagram
     Streamlit-->>User: Render Diagnostic UI
 ```
 
-### 26. Treemap
+### 26. Feature Categorization Map
 ```mermaid
-treemap
-    "Workplace Survey Features"
-        "Nominal Categorical (20)"
-        "Ordinal (3)"
-        "Numeric & Composite (4)"
+mindmap
+  root((Workplace Survey Features))
+    Nominal Categorical
+      Gender
+      Country
+      State
+      Benefits & Care Options
+    Ordinal
+      no_employees
+      leave
+      work_interfere
+    Numeric & Composite
+      Age
+      company_support_score
+      consequence_concern_score
+      workplace_comfort_score
 ```
 
-### 27. Venn Diagram
+### 27. Feature Subset Interactions
 ```mermaid
 flowchart TD
-    subgraph Total Feature Set
-        A[Demographics]
-        B[Workplace Benefits]
-        C[Mental Health Parity]
+    subgraph Total Survey Feature Set
+        A[Demographics: Age, Gender, Country, State]
+        B[Workplace Benefits: Benefits, Care Options, Wellness]
+        C[Mental Health Parity: Consequence, Coworkers, Supervisor]
     end
 ```
 
-### 28. Ishikawa (Fishbone) Diagram
+### 28. Ishikawa (Fishbone) Cause & Effect Diagram
 ```mermaid
 flowchart LR
     subgraph Causes of Baseline Low Accuracy (~44%)
@@ -759,7 +897,7 @@ flowchart LR
     Direction4 --> Cause
 ```
 
-### 29. Wardley Map
+### 29. Wardley Value Chain Map
 ```mermaid
 flowchart TD
     User[Employee] --> UI[Streamlit UI]
@@ -767,13 +905,13 @@ flowchart TD
     Model --> Data[OSMI Dataset]
 ```
 
-### 30. Cynefin Framework
+### 30. Cynefin Complexity Framework
 ```mermaid
 flowchart TD
     Complex[Complex Domain: Mental Health Behaviors] --> Analytics[Machine Learning & SHAP Analysis]
 ```
 
-### 31. Tree Diagram
+### 31. Feature Hierarchy Tree Diagram
 ```mermaid
 flowchart TD
     Root[Workplace Features] --> Demographics[Age, Gender, Country, State]
