@@ -316,9 +316,9 @@ When `python -m src.train` completes, the terminal output should end with:
 Run this quick Python command to verify that the exported model artifact can be loaded and executed:
 
 ```bash
-python -c "import joblib; pipe = joblib.load('models/best_mental_health_pipeline.pkl'); print('✅ Pipeline loaded successfully! Steps:', list(pipe.named_steps.keys()))"
+python -c "import joblib; pipe = joblib.load('models/best_mental_health_pipeline.pkl'); print('[OK] Pipeline loaded successfully! Steps:', list(pipe.named_steps.keys()))"
 ```
-*Expected Output*: `✅ Pipeline loaded successfully! Steps: ['cleaner', 'preprocessor', 'classifier']`
+*Expected Output*: `[OK] Pipeline loaded successfully! Steps: ['cleaner', 'preprocessor', 'classifier']`
 
 ---
 
