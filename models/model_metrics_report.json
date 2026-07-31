@@ -1,0 +1,225 @@
+{
+    "best_model_name": "Tuned CatBoost",
+    "best_metrics": {
+        "Accuracy": 0.8214285714285714,
+        "Precision": 0.7862068965517242,
+        "Recall": 0.890625,
+        "F1 Score": 0.8351648351648352,
+        "ROC AUC": 0.8941532258064515,
+        "Balanced Accuracy": 0.8203125,
+        "MCC": 0.6479534702781554,
+        "Cohen Kappa": 0.6420002525571411,
+        "Confusion Matrix": [
+            [
+                93,
+                31
+            ],
+            [
+                14,
+                114
+            ]
+        ]
+    },
+    "all_model_metrics": {
+        "Logistic Regression": {
+            "Accuracy": 0.6944444444444444,
+            "Precision": 0.7073170731707317,
+            "Recall": 0.6796875,
+            "F1 Score": 0.6932270916334662,
+            "ROC AUC": 0.7552293346774193,
+            "Balanced Accuracy": 0.6946824596774194,
+            "MCC": 0.3894262627483715,
+            "Cohen Kappa": 0.3891197582168492,
+            "Confusion Matrix": [
+                [
+                    88,
+                    36
+                ],
+                [
+                    41,
+                    87
+                ]
+            ]
+        },
+        "Decision Tree": {
+            "Accuracy": 0.746031746031746,
+            "Precision": 0.7711864406779662,
+            "Recall": 0.7109375,
+            "F1 Score": 0.7398373983739838,
+            "ROC AUC": 0.846648185483871,
+            "Balanced Accuracy": 0.7465977822580645,
+            "MCC": 0.4941304151013914,
+            "Cohen Kappa": 0.49257488044299014,
+            "Confusion Matrix": [
+                [
+                    97,
+                    27
+                ],
+                [
+                    37,
+                    91
+                ]
+            ]
+        },
+        "Random Forest": {
+            "Accuracy": 0.7738095238095238,
+            "Precision": 0.7751937984496124,
+            "Recall": 0.78125,
+            "F1 Score": 0.7782101167315175,
+            "ROC AUC": 0.848601310483871,
+            "Balanced Accuracy": 0.7736895161290323,
+            "MCC": 0.5474652703491669,
+            "Cohen Kappa": 0.5474480151228733,
+            "Confusion Matrix": [
+                [
+                    95,
+                    29
+                ],
+                [
+                    28,
+                    100
+                ]
+            ]
+        },
+        "XGBoost": {
+            "Accuracy": 0.8214285714285714,
+            "Precision": 0.7862068965517242,
+            "Recall": 0.890625,
+            "F1 Score": 0.8351648351648352,
+            "ROC AUC": 0.8822454637096775,
+            "Balanced Accuracy": 0.8203125,
+            "MCC": 0.6479534702781554,
+            "Cohen Kappa": 0.6420002525571411,
+            "Confusion Matrix": [
+                [
+                    93,
+                    31
+                ],
+                [
+                    14,
+                    114
+                ]
+            ]
+        },
+        "CatBoost": {
+            "Accuracy": 0.8015873015873016,
+            "Precision": 0.7708333333333334,
+            "Recall": 0.8671875,
+            "F1 Score": 0.8161764705882353,
+            "ROC AUC": 0.8872227822580645,
+            "Balanced Accuracy": 0.8005292338709677,
+            "MCC": 0.607210710635291,
+            "Cohen Kappa": 0.6022727272727273,
+            "Confusion Matrix": [
+                [
+                    91,
+                    33
+                ],
+                [
+                    17,
+                    111
+                ]
+            ]
+        },
+        "LightGBM": {
+            "Accuracy": 0.8055555555555556,
+            "Precision": 0.7762237762237763,
+            "Recall": 0.8671875,
+            "F1 Score": 0.8191881918819188,
+            "ROC AUC": 0.8909400201612905,
+            "Balanced Accuracy": 0.8045614919354839,
+            "MCC": 0.614666503380629,
+            "Cohen Kappa": 0.6102764802423937,
+            "Confusion Matrix": [
+                [
+                    92,
+                    32
+                ],
+                [
+                    17,
+                    111
+                ]
+            ]
+        },
+        "Extra Trees": {
+            "Accuracy": 0.7579365079365079,
+            "Precision": 0.768,
+            "Recall": 0.75,
+            "F1 Score": 0.758893280632411,
+            "ROC AUC": 0.8357484879032258,
+            "Balanced Accuracy": 0.7580645161290323,
+            "MCC": 0.516080261856306,
+            "Cohen Kappa": 0.5159339967250283,
+            "Confusion Matrix": [
+                [
+                    95,
+                    29
+                ],
+                [
+                    32,
+                    96
+                ]
+            ]
+        },
+        "Tuned XGBoost": {
+            "Accuracy": 0.8214285714285714,
+            "Precision": 0.7902097902097902,
+            "Recall": 0.8828125,
+            "F1 Score": 0.8339483394833949,
+            "ROC AUC": 0.8973034274193549,
+            "Balanced Accuracy": 0.8204385080645161,
+            "MCC": 0.6467095234161934,
+            "Cohen Kappa": 0.6420906451205656,
+            "Confusion Matrix": [
+                [
+                    94,
+                    30
+                ],
+                [
+                    15,
+                    113
+                ]
+            ]
+        },
+        "Tuned Random Forest": {
+            "Accuracy": 0.7777777777777778,
+            "Precision": 0.7769230769230769,
+            "Recall": 0.7890625,
+            "F1 Score": 0.7829457364341085,
+            "ROC AUC": 0.8482232862903226,
+            "Balanced Accuracy": 0.7775957661290323,
+            "MCC": 0.555401527171553,
+            "Cohen Kappa": 0.5553314847491808,
+            "Confusion Matrix": [
+                [
+                    95,
+                    29
+                ],
+                [
+                    27,
+                    101
+                ]
+            ]
+        },
+        "Tuned CatBoost": {
+            "Accuracy": 0.8214285714285714,
+            "Precision": 0.7862068965517242,
+            "Recall": 0.890625,
+            "F1 Score": 0.8351648351648352,
+            "ROC AUC": 0.8941532258064515,
+            "Balanced Accuracy": 0.8203125,
+            "MCC": 0.6479534702781554,
+            "Cohen Kappa": 0.6420002525571411,
+            "Confusion Matrix": [
+                [
+                    93,
+                    31
+                ],
+                [
+                    14,
+                    114
+                ]
+            ]
+        }
+    }
+}
